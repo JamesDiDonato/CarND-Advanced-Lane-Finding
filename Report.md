@@ -259,7 +259,7 @@ With the coeffieients contained in lpoly & rpoly, the equation of the lane lines
 
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
-The radius of curvature and vehicle position offset was calculated at the end of FitLaneLine function. To start, the coefficients from the polynomials are scaled to meteres using a conversion factor for pixels to meters in both x and y:
+The radius of curvature and vehicle position offset were calculated at the end of FitLaneLine(...) function. To start, the coefficients from the polynomials are scaled to meters using a conversion factor for pixels to meters in both x and y:
 
 ```
 # Pixel to Meters Conversion Factor
@@ -276,7 +276,11 @@ right_fit_meters  = [right_poly[0]*xm_per_pix/(ym_per_pix**2),
 
 ``` 
 
-With the scaled polynomial coefficients, the curvature can be calculated using the formula provided in the lectures. The y value was chosen in the calculation was the bottom of the image (start of the lane line).
+With the scaled polynomial coefficients, the curvature can be calculated using the formula provided in the lectures, shown below. The y value for the calculation was chosen as the bottom of the image (start of the lane line). The curvature is calculated for both left and right lane lines and then averaged.
+
+![alt text][image12]
+
+
 
 The lane position offset calculation was made by subtracting the pixel location of the center of the vehicle (image) by the center of the lane (average of left and right lane starting x coordinates). The resulting value is multiplied by the x-scale to give the offset in meters.
 
@@ -289,12 +293,6 @@ offC = pixel_off_center*xm_per_pix # Convert pixels to meters
 ```
 
 Finally, as the last step in the FitLaneLine(...) function, the curvature and center offset are displayed on the image as strings.
-
-
-![alt text][image12]
-
-The curvature is calculated for both left and right lane lines and then averaged.
-
 
 #### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
@@ -350,7 +348,7 @@ Here's a [link to my video result](./output_video.mp4)
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-I would like to highlight the importance of using previous frame results when processing consecutive frames in the video. Because the lane line positions hardly change from frame to frame, I was able to smooth out the lane lines between frames. I accomplished by developing a Tracker class to store values computed for previous images. The Tracker class was used in the following ways:
+I would like to highlight the importance of using previous frame results when processing consecutive frames in the video. Because the lane line positions hardly change from frame to frame, I was able to smooth out the lane lines between frames very effectively. I accomplished this by developing a Tracker class to store values computed for previous images. The Tracker class was used in the following ways:
 
 Identifying the starting lane line position:
 * The starting point of the left / right lane lines hardly changes between video frames. The starting positions are stored in the Tracker variable LastLeftLaneStart and LastRightLaneStart to mark the x coordinates of the beggining of the lane lines for the previous frame. If the calculated starting positions are too far away from the previous frame, then they are dis-regarded and the old positions are used. Lines 54- 61 in FitLaneLine(...):
@@ -364,8 +362,10 @@ if(np.abs(r_center - Tracker.LastRightLaneStart) < LaneStartOffset):
 else:
     r_center =  Tracker.LastRightLaneStart      
 ```
+Filter Curvature & Vehicle Offset:
 * Secondly, the Tracker class is used to average the curvature and offset values for the previous 50 frames, acting as a simple filter.
 
+Average Polynomials:
 * Finally, the coefficients for each line are averaged for the past 10 frames to reduce wobbly lines and help them follow the lane smoothly. Lines 160-163 in FitLaneLine(...):
 ```
 if(frame_counter  > Tracker.GetPolyThreshold()):
