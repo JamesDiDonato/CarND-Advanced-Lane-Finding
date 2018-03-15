@@ -31,7 +31,7 @@ The goals / steps of this project are the following:
 [image9]: ./ReportPics/PerspectiveTransform.jpg "Illustrating Perspective Transform"
 [image10]: ./ReportPics/LaneLines1.png "Plotting Lane Lines"
 [image11]: ./ReportPics/LaneLines2.png "Plotting Lane Lines"
-[image12]: ./ReportPics/RCurve.png.jpg "Curvature Formula"
+[image12]: ./ReportPics/RCurve.png "Curvature Formula"
 [image13]: ./ReportPics/output1.png "Pipeline Results"
 [image14]: ./ReportPics/output2.png "Pipeline Results"
 [image15]: ./ReportPics/output3.png "Pipeline Results"
